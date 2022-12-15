@@ -36,13 +36,13 @@ import adafruit_fingerprint
 
 def get_fingerprint():
     # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
-    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+    # uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
 
     # If using with Linux/Raspberry Pi and hardware UART:
     # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
 
     # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
-    # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+    uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
 
     finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
     """Get a finger print image, template it, and see if it matches!"""
