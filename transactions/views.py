@@ -13,6 +13,7 @@ from transactions.forms import (
     WithdrawForm,
 )
 from transactions.models import Transaction
+from transactions import adafruit_fingerprint
 
 
 ################
@@ -23,7 +24,7 @@ import time
 
 import serial
 
-import adafruit_fingerprint
+# import adafruit_fingerprint
 
 
 # import board
