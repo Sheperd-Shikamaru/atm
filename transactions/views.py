@@ -24,7 +24,7 @@ import time
 
 import serial
 
-# import adafruit_fingerprint
+import adafruit_fingerprint
 
 
 # import board
