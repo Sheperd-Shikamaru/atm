@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'banking_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'project', 
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'atm_db', 
+        'USER': 'sheperd',
+        'PASSWORD': 'SHEPERD',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
