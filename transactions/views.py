@@ -29,21 +29,22 @@ import adafruit_fingerprint
 # import board
 # uart = busio.UART(board.TX, board.RX, baudrate=57600)
 
-# If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
-uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
 
-# If using with Linux/Raspberry Pi and hardware UART:
-# uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-
-# If using with Linux/Raspberry Pi 3 with pi3-disable-bt
-# uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
-
-finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
 ##################################################
 
 
 def get_fingerprint():
+    # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
+    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi and hardware UART:
+    # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
+    # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
     """Get a finger print image, template it, and see if it matches!"""
     print("Waiting for image...")
     while finger.get_image() != adafruit_fingerprint.OK:
@@ -59,6 +60,16 @@ def get_fingerprint():
 
 # pylint: disable=too-many-branches
 def get_fingerprint_detail():
+    # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
+    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi and hardware UART:
+    # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
+    # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
     """Get a finger print image, template it, and see if it matches!
     This time, print out each error instead of just returning on failure"""
     print("Getting image...", end="")
@@ -106,6 +117,16 @@ def get_fingerprint_detail():
 
 # pylint: disable=too-many-statements
 def enroll_finger(location):
+        # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
+    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi and hardware UART:
+    # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
+    # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
     """Take a 2 finger images and template it, then store in 'location'"""
     for fingerimg in range(1, 3):
         if fingerimg == 1:
@@ -176,6 +197,16 @@ def enroll_finger(location):
 
 
 def save_fingerprint_image(filename):
+    # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
+    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi and hardware UART:
+    # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
+    # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
+    # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
     """Scan fingerprint then save image to filename."""
     while finger.get_image():
         pass
