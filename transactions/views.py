@@ -367,7 +367,18 @@ class DepositMoneyView(TransactionCreateMixin):
     title = 'Deposit Money to Your Account'
 
     def get_initial(self):
+        # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
+        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+        # If using with Linux/Raspberry Pi and hardware UART:
+        # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
+        # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
+        # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
+
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
         while True:
+
             if finger.read_templates() != adafruit_fingerprint.OK:
                 raise RuntimeError("Failed to read templates")
             print("Fingerprint templates: ", finger.templates)
