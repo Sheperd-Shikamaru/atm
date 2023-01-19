@@ -12,6 +12,10 @@ from transactions.forms import (
     TransactionDateRangeForm,
     WithdrawForm,
 )
+
+from django.shortcuts import redirect
+from python_fingerprint.pyfingerprint import PyFingerprint
+
 from transactions.models import Transaction
 
 
@@ -339,6 +343,50 @@ class TransactionRepostView(LoginRequiredMixin, ListView):
 
         return context
 
+def fingerprint_auth(request):
+    try:
+        # Connect to the fingerprint sensor
+        f = PyFingerprint('/dev/ttyUSB0', 57600, 0xFFFFFFFF, 0x00000000)
+
+        # Search for a finger
+        if ( f.verifyPassword() == False ):
+            raise ValueError('The given fingerprint sensor password is wrong!')
+
+    except Exception as e:
+        print('The fingerprint sensor could not be initialized!')
+        print('Exception message: ' + str(e))
+        return redirect('login')
+
+    try:
+        print('Waiting for finger...')
+
+        # Wait that finger is read
+        while ( f.readImage() == False ):
+            pass
+
+        # Converts read image to characteristics and stores it in charbuffer 1
+        f.convertImage(0x01)
+
+        # Searchs template
+        result = f.searchTemplate()
+
+        positionNumber = result[0]
+        accuracyScore = result[1]
+
+        if ( positionNumber == -1 ):
+            print('No match found!')
+            return redirect('login')
+        else:
+            print('Found template at position #' + str(positionNumber))
+            print('The accuracy score is: ' + str(accuracyScore))
+            # Authenticate the user and allow access to protected resource
+            request.session['authenticated'] = True
+            return redirect('home')
+
+    except Exception as e:
+        print('Operation failed!')
+        print('Exception message: ' + str(e))
+        return redirect('login')
 
 class TransactionCreateMixin(LoginRequiredMixin, CreateView):
     template_name = 'transactions/transaction_form.html'

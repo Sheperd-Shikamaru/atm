@@ -1,0 +1,25 @@
+<form id="fingerprint-form">
+    <button id="fingerprint-button">Authenticate with Fingerprint</button>
+  </form>
+
+  <script>
+    $(document).ready(function() {
+    $('#fingerprint-button').click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/fingerprint_auth',
+            success: function(data) {
+                if (data.authenticated) {
+                    // Redirect the user to the protected resource
+                    window.location.href = '/home';
+                } else {
+                    // Display an error message
+                    alert('Fingerprint authentication failed. Please try again.');
+                }
+            }
+        });
+    });
+});
+
+</script>
