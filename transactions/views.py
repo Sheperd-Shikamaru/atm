@@ -14,7 +14,7 @@ from transactions.forms import (
 )
 
 from django.shortcuts import redirect
-from python_fingerprint.pyfingerprint import PyFingerprint
+from pyfingerprint.pyfingerprint import PyFingerprint
 
 from transactions.models import Transaction
 
@@ -375,7 +375,7 @@ def fingerprint_auth(request):
 
         if ( positionNumber == -1 ):
             print('No match found!')
-            return redirect('login')
+            return redirect('user_login')
         else:
             print('Found template at position #' + str(positionNumber))
             print('The accuracy score is: ' + str(accuracyScore))
