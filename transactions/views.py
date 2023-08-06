@@ -355,7 +355,7 @@ def fingerprint_auth(request):
     except Exception as e:
         print('The fingerprint sensor could not be initialized!')
         print('Exception message: ' + str(e))
-        return redirect('login')
+        return redirect('user_login')
 
     try:
         print('Waiting for finger...')
@@ -386,7 +386,7 @@ def fingerprint_auth(request):
     except Exception as e:
         print('Operation failed!')
         print('Exception message: ' + str(e))
-        return redirect('login')
+        return redirect('user_login')
 
 class TransactionCreateMixin(LoginRequiredMixin, CreateView):
     template_name = 'transactions/transaction_form.html'

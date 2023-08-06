@@ -42,4 +42,33 @@
         </form>
     </body>
 
+    <body>
+        <h1>Fingerprint Enrollment</h1>
+        <form method="post">
+            {% csrf_token %}
+            <label for="location">Fingerprint Location:</label>
+            <input type="number" name="location" required>
+            <button type="submit">Enroll Fingerprint</button>
+        </form>
+    </body>
+
+    <div id="message"></div>
+    <script>
+        const enrollButton = document.getElementById('enrollButton');
+        const messageDiv = document.getElementById('message');
+
+        enrollButton.addEventListener('click', function() {
+            enrollButton.disabled = true;
+            messageDiv.textContent = 'Place your finger on the sensor...';
+
+            // Logic to trigger the fingerprint detection process
+            // Once the fingerprint is detected, you can submit the form using JavaScript
+            // You need to integrate the fingerprint detection process here
+            // For demonstration, I'll simulate a delay before submitting the form
+            setTimeout(function() {
+                document.getElementById('enrollForm').submit();
+            }, 5000);  // Simulating a 5-second delay before submission
+        });
+    </script>
+
 {% endblock %}

@@ -1,0 +1,38 @@
+#models
+
+from django.db import models
+
+class FingerprintTemplate(models.Model):
+    location = models.PositiveIntegerField(unique=True)
+
+
+===================================
+#views
+
+import time
+import serial
+import adafruit_fingerprint
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import FingerprintTemplate
+
+def enroll_fingerprint_view(request):
+    if request.method == 'POST':
+        location = request.POST.get('location')
+
+        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+
+        # The rest of your enrollment code here
+
+        success = enroll_finger(int(location))
+        if success:
+            FingerprintTemplate.objects.create(location=int(location))
+            return JsonResponse({'message': 'Fingerprint enrolled successfully.'})
+        else:
+            return JsonResponse({'error': 'Fingerprint enrollment failed.'})
+
+    return render(request, 'enroll_fingerprint.html')
+
+
+========================================================
