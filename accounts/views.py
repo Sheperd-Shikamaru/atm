@@ -42,7 +42,7 @@ class UserRegistrationView(TemplateView):
                 )
             )
             return HttpResponseRedirect(
-                reverse_lazy('transactions:deposit_money')
+                reverse_lazy('transactions:fingerprint_register')
             )
 
         return self.render_to_response(
@@ -62,6 +62,7 @@ class UserRegistrationView(TemplateView):
 
 
 class UserLoginView(LoginView):
+    # template_name='accounts/fingerprint.html'
     template_name='accounts/user_login.html'
     redirect_authenticated_user = False
 

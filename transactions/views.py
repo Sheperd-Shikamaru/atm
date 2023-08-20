@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
-
+from django.http import JsonResponse
+from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -343,6 +344,7 @@ class TransactionRepostView(LoginRequiredMixin, ListView):
 
         return context
 
+#login
 def fingerprint_auth(request):
     try:
         # Connect to the fingerprint sensor
@@ -414,43 +416,6 @@ class DepositMoneyView(TransactionCreateMixin):
     form_class = DepositForm
     title = 'Deposit Money to Your Account'
 
-    def get_initial(self):
-        # If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
-        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
-
-        # If using with Linux/Raspberry Pi and hardware UART:
-        # uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
-
-        # If using with Linux/Raspberry Pi 3 with pi3-disable-bt
-        # uart = serial.Serial("/dev/ttyAMA0", baudrate=57600, timeout=1)
-
-        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        while True:
-
-            if finger.read_templates() != adafruit_fingerprint.OK:
-                raise RuntimeError("Failed to read templates")
-            print("Fingerprint templates: ", finger.templates)
-            if finger.count_templates() != adafruit_fingerprint.OK:
-                raise RuntimeError("Failed to read templates")
-            print("Number of templates found: ", finger.template_count)
-            if finger.read_sysparam() != adafruit_fingerprint.OK:
-                raise RuntimeError("Failed to get system parameters")
-            print("Size of template library: ", finger.library_size)
-            print("e) enroll print")
-            print("f) find print")
-            print("d) delete print")
-            print("s) save fingerprint image")
-            print("r) reset library")
-            print("q) quit")
-            print("----------------")
-            c = input("> ")
-
-            if c == "e":
-                enroll_finger(get_num(finger.library_size))
-            else:
-                initial = {'transaction_type': DEPOSIT}
-                return initial
-
     def form_valid(self, form):
         amount = form.cleaned_data.get('amount')
         account = self.request.user.account
@@ -482,6 +447,196 @@ class DepositMoneyView(TransactionCreateMixin):
         )
 
         return super().form_valid(form)
+
+'''
+def enroll_finger(location):
+        response_data = {}
+        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        
+        """Take a 2 finger images and template it, then store in 'location'"""
+        
+        for fingerimg in range(1, 3):
+            if fingerimg == 1:
+                response_data['status'] = "Place finger on sensor..."
+                print("Place finger on sensor...", end="")
+            else:
+                response_data['status'] = "Place same finger again..."
+                print("Place same finger again...", end="")
+
+            while True:
+                i = finger.get_image()
+                if i == adafruit_fingerprint.OK:
+                    response_data['status'] = "Fingerprint recorded"
+                    print("Image taken")
+                    break
+                if i == adafruit_fingerprint.NOFINGER:
+                    response_data['status'] = "."
+                    print(".", end="")
+                elif i == adafruit_fingerprint.IMAGEFAIL:
+                    response_data['status'] = "fingerprint error"
+                    print("Imaging error")
+                    return False
+                else:
+                    response_data['status'] = "An error occured"
+                    print("Other error")
+                    return False
+
+            print("Templating...", end="")
+            i = finger.image_2_tz(fingerimg)
+            if i == adafruit_fingerprint.OK:
+                response_data['status'] = "captured"
+                
+                print("Templated")
+            else:
+                if i == adafruit_fingerprint.IMAGEMESS:
+                    response_data['status'] = "Fingerprint too messy"
+                    print("Image too messy")
+                elif i == adafruit_fingerprint.FEATUREFAIL:
+                    response_data['status'] = "Could not identify features"
+                    print("Could not identify features")
+                elif i == adafruit_fingerprint.INVALIDIMAGE:
+                    response_data['status'] = "Fingerprint invalid"
+                    print("Image invalid")
+                else:
+                    response_data['status'] = "An error occured"
+                    print("Other error")
+                return False
+
+            if fingerimg == 1:
+                response_data['status'] = "Remove finger"
+                print("Remove finger")
+                time.sleep(2)
+                while i != adafruit_fingerprint.NOFINGER:
+                    i = finger.get_image()
+
+        response_data['status'] = "Creating model..."
+        print("Creating model...", end="")
+        i = finger.create_model()
+        if i == adafruit_fingerprint.OK:
+            response_data['status'] = "Created"
+            print("Created")
+        else:
+            if i == adafruit_fingerprint.ENROLLMISMATCH:
+                response_data['status'] = "Prints did not match"
+                print("Prints did not match")
+            else:
+                response_data['status'] = "An error occured"
+                print("Other error")
+            return False
+
+        print("Storing model #%d..." % location, end="")
+        i = finger.store_model(location)
+        if i == adafruit_fingerprint.OK:
+            print("Stored")
+        else:
+            if i == adafruit_fingerprint.BADLOCATION:
+                print("Bad storage location")
+            elif i == adafruit_fingerprint.FLASHERR:
+                print("Flash storage error")
+            else:
+                print("Other error")
+            return False
+
+        return True
+        # return JsonResponse(json_response, safe=False)
+        
+def fingerprint_register(request):
+    
+    # pylint: disable=too-many-statements
+    
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        enroll_finger(location)
+    return render(request, 'accounts/fingerprint.html')
+'''
+#######################
+def enroll_finger(location):
+    response_data = {}
+    uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+
+    finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+
+    """Take a 2 finger images and template it, then store in 'location'"""
+
+    for fingerimg in range(1, 3):
+        if fingerimg == 1:
+            response_data['status'] = "Place finger on sensor..."
+            print("Place finger on sensor...", end="")
+        else:
+            response_data['status'] = "Place same finger again..."
+            print("Place same finger again...", end="")
+
+        try:
+            i = finger.get_image()
+        except IOError:
+            response_data['status'] = "Fingerprint sensor not connected"
+            return response_data
+
+        if i == adafruit_fingerprint.OK:
+            response_data['status'] = "Fingerprint recorded"
+            print("Image taken")
+        else:
+            response_data['status'] = "An error occured"
+            return response_data
+
+        print("Templating...", end="")
+        i = finger.image_2_tz(fingerimg)
+        if i == adafruit_fingerprint.OK:
+            response_data['status'] = "captured"
+
+            print("Templated")
+        else:
+            response_data['status'] = "An error occured"
+            return response_data
+
+        if fingerimg == 1:
+            response_data['status'] = "Remove finger"
+            print("Remove finger")
+            time.sleep(2)
+            while i != adafruit_fingerprint.NOFINGER:
+                i = finger.get_image()
+
+        response_data['status'] = "Creating model..."
+        print("Creating model...", end="")
+        i = finger.create_model()
+        if i == adafruit_fingerprint.OK:
+            response_data['status'] = "Created"
+            print("Created")
+        else:
+            if i == adafruit_fingerprint.ENROLLMISMATCH:
+                response_data['status'] = "Prints did not match"
+                print("Prints did not match")
+            else:
+                response_data['status'] = "An error occured"
+            return response_data
+
+        print("Storing model #%d..." % location, end="")
+        i = finger.store_model(location)
+        if i == adafruit_fingerprint.OK:
+            print("Stored")
+        else:
+            if i == adafruit_fingerprint.BADLOCATION:
+                print("Bad storage location")
+            elif i == adafruit_fingerprint.FLASHERR:
+                print("Flash storage error")
+            else:
+                print("Other error")
+            return response_data
+
+    response_data['location'] = location
+    return response_data
+
+def fingerprint_register(request):
+
+    # pylint: disable=too-many-statements
+
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        response_data = enroll_finger(location)
+        return JsonResponse(response_data, safe=False)
+    return render(request, 'accounts/fingerprint.html')
 
 
 class WithdrawMoneyView(TransactionCreateMixin):

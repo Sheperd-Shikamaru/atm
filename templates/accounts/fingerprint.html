@@ -1,28 +1,4 @@
-{% comment %} <form id="fingerprint-form">
-    <button id="fingerprint-button">Authenticate with Fingerprint</button>
-  </form>
 
-  <script>
-    $(document).ready(function() {
-    $('#fingerprint-button').click(function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/fingerprint_auth',
-            success: function(data) {
-                if (data.authenticated) {
-                    // Redirect the user to the protected resource
-                    window.location.href = '/home';
-                } else {
-                    // Display an error message
-                    alert('Fingerprint authentication failed. Please try again.');
-                }
-            }
-        });
-    });
-});
-
-</script> {% endcomment %}
 {% extends 'core/base.html' %}
 
 {% block head_title %}Banking System{% endblock %}
@@ -30,45 +6,88 @@
 {% block content %}
 
     <body>
-        <h1>Please place your finger on the Finger Print sensor</h1>
+        <h1 class="mb-3 mt-10" style="display: flex; justify-content: center;">Please place your finger on the Finger Print sensor</h1>
+
+        <div style="display: flex; justify-content: center;">
+            <img style="display: flex; justify-content: center;"  src="https://th.bing.com/th/id/OIP.iEB26aXE4ClDEpKGvD_vbAHaER?pid=ImgDet&rs=1">
+        </div>
         {% if error %}
             <p>{{ error }}</p>
         {% endif %}
-        <form action="" method="post">
+        <form action="/fingerprint_register" method="post">
             {% csrf_token %}
-            
-            <input type="number" name="location" placeholder="Location">
-            <input type="submit" value="Enroll">
+
         </form>
+        <input type="text" value="11" id="location" hidden>
+        <div id="message"></div>
     </body>
 
-    <body>
-        <h1>Fingerprint Enrollment</h1>
-        <form method="post">
-            {% csrf_token %}
-            <label for="location">Fingerprint Location:</label>
-            <input type="number" name="location" required>
-            <button type="submit">Enroll Fingerprint</button>
-        </form>
-    </body>
 
-    <div id="message"></div>
-    <script>
-        const enrollButton = document.getElementById('enrollButton');
-        const messageDiv = document.getElementById('message');
+<!-- Add jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        enrollButton.addEventListener('click', function() {
-            enrollButton.disabled = true;
-            messageDiv.textContent = 'Place your finger on the sensor...';
 
-            // Logic to trigger the fingerprint detection process
-            // Once the fingerprint is detected, you can submit the form using JavaScript
-            // You need to integrate the fingerprint detection process here
-            // For demonstration, I'll simulate a delay before submitting the form
-            setTimeout(function() {
-                document.getElementById('enrollForm').submit();
-            }, 5000);  // Simulating a 5-second delay before submission
+
+{% comment %} <script>
+$(document).ready(function() {
+    $('#enroll-form').on('submit', function(event) {
+        event.preventDefault();
+
+        var location = $('#location').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "fingerprint_register" %}',  // Replace with the correct URL
+            //url: "#",
+            data: {
+                'location': location,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: 'json',
+            success: function(response) {
+                if ('message' in response) {
+                    window.location.href = "{% url 'deposit_money' %}"
+                    // Do any additional actions on success
+                } else if ('status' in response) {
+                    alert(response.status);
+                    // Do any additional actions on error
+                } else if ('error' in response) {
+                    alert(response.error);
+                    // Do any additional actions on error
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                // Handle the error condition
+            }
         });
-    </script>
+    });
+});
+</script> {% endcomment %}
+
+<script>
+$(document).ready(function() {
+    $("#fingerprint-register").submit(function(event) {
+      event.preventDefault();
+  
+      var location = $("#location").val();
+  
+      $.ajax({
+        url: "/fingerprint_register",
+        data: {
+          location: location
+        },
+        success: function(response) {
+          if (response.status == "Fingerprint recorded") {
+            alert("Fingerprint recorded successfully");
+          } else {
+            alert("An error occurred");
+          }
+        }
+      });
+    });
+  });
+  
+</script>
 
 {% endblock %}
