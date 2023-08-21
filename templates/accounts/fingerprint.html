@@ -1,93 +1,103 @@
+{% extends 'core/base.html' %} {% block head_title %}Banking System{% endblock
+%} {% block content %}
 
-{% extends 'core/base.html' %}
+<body>
+  <h1 class="mb-3 mt-10" style="display: flex; justify-content: center">
+    Please place your finger on the Finger Print sensor
+  </h1>
 
-{% block head_title %}Banking System{% endblock %}
+  <div style="display: flex; justify-content: center">
+    <img
+      style="display: flex; justify-content: center"
+      src="https://th.bing.com/th/id/OIP.iEB26aXE4ClDEpKGvD_vbAHaER?pid=ImgDet&rs=1"/>
+  </div>
+  <p id="error-message"></p>
 
-{% block content %}
+  <form id="fingerprint-form">
+    {% csrf_token %}
+    <input type="text" id="location" value="11" hidden />
+    <button type="submit">Enroll Fingerprint</button>
+  </form>
 
-    <body>
-        <h1 class="mb-3 mt-10" style="display: flex; justify-content: center;">Please place your finger on the Finger Print sensor</h1>
+  <div id="message"></div>
+</body>
 
-        <div style="display: flex; justify-content: center;">
-            <img style="display: flex; justify-content: center;"  src="https://th.bing.com/th/id/OIP.iEB26aXE4ClDEpKGvD_vbAHaER?pid=ImgDet&rs=1">
-        </div>
-        {% if error %}
-            <p>{{ error }}</p>
-        {% endif %}
-        <form action="/fingerprint_register" method="post">
-            {% csrf_token %}
-
-        </form>
-        <input type="text" value="11" id="location" hidden>
-        <div id="message"></div>
-    </body>
-
-
-<!-- Add jQuery library -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-
-{% comment %} <script>
-$(document).ready(function() {
-    $('#enroll-form').on('submit', function(event) {
-        event.preventDefault();
-
-        var location = $('#location').val();
-
-        $.ajax({
-            type: 'POST',
-            url: '{% url "fingerprint_register" %}',  // Replace with the correct URL
-            //url: "#",
-            data: {
-                'location': location,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            dataType: 'json',
-            success: function(response) {
-                if ('message' in response) {
-                    window.location.href = "{% url 'deposit_money' %}"
-                    // Do any additional actions on success
-                } else if ('status' in response) {
-                    alert(response.status);
-                    // Do any additional actions on error
-                } else if ('error' in response) {
-                    alert(response.error);
-                    // Do any additional actions on error
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                // Handle the error condition
-            }
-        });
-    });
-});
-</script> {% endcomment %}
-
 <script>
-$(document).ready(function() {
-    $("#fingerprint-register").submit(function(event) {
+  $(document).ready(function () {
+    $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
-  
+
       var location = $("#location").val();
-  
+
       $.ajax({
         url: "/fingerprint_register",
+        method: "POST",
         data: {
-          location: location
+          location: location,
         },
-        success: function(response) {
+        success: function (response) {
           if (response.status == "Fingerprint recorded") {
-            alert("Fingerprint recorded successfully");
-          } else {
-            alert("An error occurred");
+            $("#message").text("Fingerprint recorded successfully");
+          } else if (response.status == "An error occurred") {
+            $("#error-message").text("An error occurred");
+          } else if (response.status == "Place finger on sensor...") {
+            $("#message").text("Place finger on sensor...");
+          } else if (response.status == "Place same finger again...") {
+            $("#message").text("Place same finger again...");
+          } else if (response.status == "Remove finger") {
+            $("#message").text("Remove finger");
+          } else if (response.status == "Creating model...") {
+            $("#message").text("Creating model...");
           }
-        }
+        },
+        error: function () {
+          $("#error-message").text("An error occurred");
+        },
       });
     });
   });
-  
 </script>
 
 {% endblock %}
+
+
+{% comment %}
+<script>
+  $(document).ready(function () {
+    $("#enroll-form").on("submit", function (event) {
+      event.preventDefault();
+
+      var location = $("#location").val();
+
+      $.ajax({
+        type: "POST",
+        url: '{% url "fingerprint_register" %}', // Replace with the correct URL
+        //url: "#",
+        data: {
+          location: location,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        dataType: "json",
+        success: function (response) {
+          if ("message" in response) {
+            window.location.href = "{% url 'deposit_money' %}";
+            // Do any additional actions on success
+          } else if ("status" in response) {
+            alert(response.status);
+            // Do any additional actions on error
+          } else if ("error" in response) {
+            alert(response.error);
+            // Do any additional actions on error
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+          // Handle the error condition
+        },
+      });
+    });
+  });
+</script>
+{% endcomment %}
