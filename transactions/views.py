@@ -636,6 +636,7 @@ def fingerprint_register(request):
         location = request.POST.get('location')
         response_data = enroll_finger(location)
         return JsonResponse(response_data, safe=False)
+    
     return render(request, 'accounts/fingerprint.html')
 
 
