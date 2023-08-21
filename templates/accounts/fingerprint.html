@@ -41,8 +41,9 @@
         method: "POST",
         data: {
           location: location,
-          csrfmiddlewaretoken: {{ csrf_token }},
+          csrfmiddlewaretoken: {{ csrf_token }}
         },
+
         success: function (response) {
           if (response.status == "Fingerprint recorded") {
             $("#message").text("Fingerprint recorded successfully");
