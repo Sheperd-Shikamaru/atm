@@ -18,6 +18,7 @@
   </div>
 
   <form id="fingerprint-form">
+    {% csrf_token %}
     <input type="text" id="location" value="11" hidden />
     <div class="mt-5" style="display: flex; justify-content: center">
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Enroll Fingerprint</button>
@@ -40,8 +41,8 @@
         url: "/transactions/fingerprint_register/",
         method: "POST",
         data: {
-          location: location,
-          csrfmiddlewaretoken: {{ csrf_token }}
+            csrfmiddlewaretoken: "{{ csrf_token }}", // Include CSRF token
+            location: location
         },
 
         success: function (response) {
