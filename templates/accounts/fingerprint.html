@@ -1,5 +1,6 @@
-{% extends 'core/base.html' %} {% block head_title %}Banking System{% endblock
-%} {% block content %}
+{% extends 'core/base.html' %} 
+{% block head_title %}Banking System{% endblock%} 
+{% block content %}
 
 <body>
   <h1 class="mb-3 mt-10" style="display: flex; justify-content: center">
@@ -16,7 +17,7 @@
   <form id="fingerprint-form">
     {% csrf_token %}
     <input type="text" id="location" value="11" hidden />
-    <button type="submit">Enroll Fingerprint</button>
+    <button class="btn btn-primary" type="submit">Enroll Fingerprint</button>
   </form>
 
   <div id="message"></div>
