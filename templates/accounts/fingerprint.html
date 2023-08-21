@@ -33,7 +33,7 @@
       var location = $("#location").val();
 
       $.ajax({
-        url: "/fingerprint_register",
+        url: "{% url 'fingerprint_register' %}",
         method: "POST",
         data: {
           location: location,
