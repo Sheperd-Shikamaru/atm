@@ -641,8 +641,8 @@ def fingerprint_register(request):
     
     return render(request, 'accounts/fingerprint.html')
 '''
-
 from django.http import StreamingHttpResponse
+
 def generate_response(location, finger):
     try:
         for fingerimg in range(1, 3):
@@ -704,14 +704,15 @@ def generate_response(location, finger):
 def fingerprint_register(request):
     if request.method == 'POST':
         location = request.POST.get('location')
-        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
-        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        with serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1) as uart:
+            finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
-        response = generate_response(location, finger)
-        response_generator = ("\n".join(response)).encode("utf-8")
-        return StreamingHttpResponse(response_generator, content_type='text/event-stream')
+            response = generate_response(location, finger)
+            response_generator = ("\n".join(response)).encode("utf-8")
+            return StreamingHttpResponse(response_generator, content_type='text/event-stream')
 
     return render(request, 'accounts/fingerprint.html')
+
 
 class WithdrawMoneyView(TransactionCreateMixin):
     form_class = WithdrawForm
