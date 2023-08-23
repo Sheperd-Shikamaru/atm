@@ -18,7 +18,7 @@ from django.shortcuts import redirect
 from pyfingerprint.pyfingerprint import PyFingerprint
 
 from transactions.models import Transaction
-from django.http import StreamingHttpResponse
+
 
 ################
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
@@ -642,77 +642,88 @@ def fingerprint_register(request):
     return render(request, 'accounts/fingerprint.html')
 '''
 
-def generate_response(location, finger):
-    try:
+
+def fingerprint_register(request):
+    # pylint: disable=too-many-statements
+
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        
+        response_data = {}
+        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+
+        """Take 2 finger images and template it, then store in 'location'"""
+
         for fingerimg in range(1, 3):
             if fingerimg == 1:
-                yield "data: Place finger on sensor...\n\n"
+                response_data['status'] = "Place finger on sensor..."
+                print("Place finger on sensor...", end="")
             else:
-                yield "data: Place same finger again...\n\n"
+                response_data['status'] = "Place same finger again..."
+                print("Place same finger again...", end="")
 
             try:
                 i = finger.get_image()
-            except IOError as e:
-                yield "data: Fingerprint sensor not connected\n\n"
-                raise e
+                time.sleep(10)
+            except IOError:
+                response_data['status'] = "Fingerprint sensor not connected"
+                return JsonResponse(response_data, safe=False)
 
             if i == adafruit_fingerprint.OK:
-                yield "data: Fingerprint recorded\n\n"
+                response_data['status'] = "Fingerprint recorded"
+                print("Image taken")
             else:
-                yield "data: An error occurred\n\n"
+                response_data['status'] = "An error occurred"
+                return JsonResponse(response_data, safe=False)
 
-            yield "data: Templating...\n\n"
+            print("Templating...", end="")
             i = finger.image_2_tz(fingerimg)
             if i == adafruit_fingerprint.OK:
-                yield "data: Captured\n\n"
+                response_data['status'] = "Captured"
+                print("Templated")
             else:
-                yield "data: An error occurred\n\n"
+                response_data['status'] = "An error occurred"
+                return JsonResponse(response_data, safe=False)
 
             if fingerimg == 1:
-                yield "data: Remove finger\n\n"
+                response_data['status'] = "Remove finger"
+                print("Remove finger")
                 time.sleep(2)
                 while i != adafruit_fingerprint.NOFINGER:
                     i = finger.get_image()
 
-            yield "data: Creating model...\n\n"
+            response_data['status'] = "Creating model..."
+            print("Creating model...", end="")
             i = finger.create_model()
             if i == adafruit_fingerprint.OK:
-                yield "data: Created\n\n"
+                response_data['status'] = "Created"
+                print("Created")
             else:
                 if i == adafruit_fingerprint.ENROLLMISMATCH:
-                    yield "data: Prints did not match\n\n"
+                    response_data['status'] = "Prints did not match"
+                    print("Prints did not match")
                 else:
-                    yield "data: An error occurred\n\n"
+                    response_data['status'] = "An error occurred"
+                return JsonResponse(response_data, safe=False)
 
-            yield "data: Storing model #%d...\n\n" % location
+            print("Storing model #%d..." % location, end="")
             i = finger.store_model(location)
             if i == adafruit_fingerprint.OK:
-                yield "data: Stored\n\n"
+                print("Stored")
             else:
                 if i == adafruit_fingerprint.BADLOCATION:
-                    yield "data: Bad storage location\n\n"
+                    print("Bad storage location")
                 elif i == adafruit_fingerprint.FLASHERR:
-                    yield "data: Flash storage error\n\n"
+                    print("Flash storage error")
                 else:
-                    yield "data: Other error\n\n"
+                    print("Other error")
+                return JsonResponse(response_data, safe=False)
 
-        yield "data: Fingerprint registration process completed.\n\n"
-
-    except Exception as e:
-        yield "data: An error occurred: {}\n\n".format(str(e))
-
-def fingerprint_register(request):
-    if request.method == 'POST':
-        location = request.POST.get('location')
-        with serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1) as uart:
-            finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-
-            response = generate_response(location, finger)
-            response_generator = ("\n".join(response)).encode("utf-8")
-            return StreamingHttpResponse(response_generator, content_type='text/event-stream')
-
+        response_data['location'] = location
+        return JsonResponse(response_data, safe=False)
+    
     return render(request, 'accounts/fingerprint.html')
-
 
 class WithdrawMoneyView(TransactionCreateMixin):
     form_class = WithdrawForm

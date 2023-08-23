@@ -3,30 +3,32 @@
 {% block content %}
 
 <body>
-  <h1 class="mb-3 mt-10">
+  <h1 class="mb-3 mt-10" style="display: flex; justify-content: center">
     Please place your finger on the Finger Print sensor
   </h1>
 
   <div style="display: flex; justify-content: center">
-    <img src="https://th.bing.com/th/id/OIP.iEB26aXE4ClDEpKGvD_vbAHaER?pid=ImgDet&rs=1"/>
+    <img
+      style="display: flex; justify-content: center"
+      src="https://th.bing.com/th/id/OIP.iEB26aXE4ClDEpKGvD_vbAHaER?pid=ImgDet&rs=1"/>
   </div>
 
-  <div class="mt-5" style="display: flex; justify-content: center; color: black;">
-    <div id="message"></div>
+  <div class="mt-5" style="display: flex; justify-content: center; color: red;">
+    <p id="error-message"></p>
   </div>
 
-  <form id="fingerprint-form" method="post">
+  <form id="fingerprint-form">
     {% csrf_token %}
-    <input type="text" id="location" name="location" value="11" hidden />
+    <input type="text" id="location" value="11" hidden />
     <div class="mt-5" style="display: flex; justify-content: center">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Enroll Fingerprint</button>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Enroll Fingerprint</button>
     </div>
   </form>
 
+  <div style="color: red;" id="message"></div>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
   $(document).ready(function () {
     $("#fingerprint-form").submit(function (event) {
@@ -34,21 +36,70 @@
 
       var location = $("#location").val();
 
-      // Using SSE to receive real-time updates
-      url = "/transactions/fingerprint_register/"
-      var eventSource = new EventSource(url);
-      eventSource.onmessage = function(event) {
-        $("#message").append(event.data + "<br>");
-      };
+      $.ajax({
+        url: "/transactions/fingerprint_register/",
+        method: "POST",
+        data: {
+          csrfmiddlewaretoken: "{{ csrf_token }}", // Include CSRF token
+          location: location,
+        },
 
-      eventSource.onclose = function() {
-        $("#message").append("Fingerprint registration process completed.<br>");
-        eventSource.close();
-      };
-      
-     
+        success: function (response) {
+          var statusMessages = response.status;  // Get the list of status messages
+
+          // Loop through status messages and update the message div
+          for (var i = 0; i < statusMessages.length; i++) {
+            var message = statusMessages[i];
+            $("#message").text(message); // Update message div with each status
+          }
+        },
+
+        error: function () {
+          $("#error-message").text("An error occurred");
+        },
+      });
     });
   });
 </script>
 
 {% endblock %}
+
+
+{% comment %}
+<script>
+  $(document).ready(function () {
+    $("#enroll-form").on("submit", function (event) {
+      event.preventDefault();
+
+      var location = $("#location").val();
+
+      $.ajax({
+        type: "POST",
+        url: '{% url "fingerprint_register" %}', // Replace with the correct URL
+        //url: "#",
+        data: {
+          location: location,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        dataType: "json",
+        success: function (response) {
+          if ("message" in response) {
+            window.location.href = "{% url 'deposit_money' %}";
+            // Do any additional actions on success
+          } else if ("status" in response) {
+            alert(response.status);
+            // Do any additional actions on error
+          } else if ("error" in response) {
+            alert(response.error);
+            // Do any additional actions on error
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+          // Handle the error condition
+        },
+      });
+    });
+  });
+</script>
+{% endcomment %}
