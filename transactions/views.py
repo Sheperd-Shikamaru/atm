@@ -643,7 +643,6 @@ def fingerprint_register(request):
 '''
 
 from django.http import StreamingHttpResponse
-
 def generate_response(location, finger):
     try:
         for fingerimg in range(1, 3):
@@ -662,49 +661,40 @@ def generate_response(location, finger):
             else:
                 yield "data: An error occurred\n\n"
 
-            print("Templating...", end="")
+            yield "data: Templating...\n\n"
             i = finger.image_2_tz(fingerimg)
             if i == adafruit_fingerprint.OK:
                 yield "data: Captured\n\n"
-                print("Templated")
             else:
                 yield "data: An error occurred\n\n"
 
             if fingerimg == 1:
                 yield "data: Remove finger\n\n"
-                print("Remove finger")
                 time.sleep(2)
                 while i != adafruit_fingerprint.NOFINGER:
                     i = finger.get_image()
 
             yield "data: Creating model...\n\n"
-            print("Creating model...", end="")
             i = finger.create_model()
             if i == adafruit_fingerprint.OK:
                 yield "data: Created\n\n"
-                print("Created")
             else:
                 if i == adafruit_fingerprint.ENROLLMISMATCH:
                     yield "data: Prints did not match\n\n"
-                    print("Prints did not match")
                 else:
                     yield "data: An error occurred\n\n"
 
-            print("Storing model #%d..." % location, end="")
+            yield "data: Storing model #%d...\n\n" % location
             i = finger.store_model(location)
             if i == adafruit_fingerprint.OK:
                 yield "data: Stored\n\n"
-                print("Stored")
             else:
                 if i == adafruit_fingerprint.BADLOCATION:
                     yield "data: Bad storage location\n\n"
-                    print("Bad storage location")
                 elif i == adafruit_fingerprint.FLASHERR:
                     yield "data: Flash storage error\n\n"
-                    print("Flash storage error")
                 else:
                     yield "data: Other error\n\n"
-                    print("Other error")
 
         yield "data: Fingerprint registration process completed.\n\n"
 
@@ -718,7 +708,8 @@ def fingerprint_register(request):
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
         response = generate_response(location, finger)
-        return StreamingHttpResponse(response, content_type='text/event-stream')
+        response_generator = ("\n".join(response)).encode("utf-8")
+        return StreamingHttpResponse(response_generator, content_type='text/event-stream')
 
     return render(request, 'accounts/fingerprint.html')
 

@@ -36,7 +36,9 @@
 
       var location = $("#location").val();
 
-      var eventSource = new EventSource("/transactions/fingerprint_register/");
+      // Using SSE to receive real-time updates
+      url = "/transactions/fingerprint_register/"
+      var eventSource = new EventSource(url);
       eventSource.onmessage = function(event) {
         $("#message").append(event.data + "<br>");
       };
@@ -45,25 +47,12 @@
         $("#message").append("Fingerprint registration process completed.<br>");
         eventSource.close();
       };
-    });
-  });
-</script>
-
-{% endblock %}
-
-
-{% comment %}
-<script>
-  $(document).ready(function () {
-    $("#enroll-form").on("submit", function (event) {
-      event.preventDefault();
-
-      var location = $("#location").val();
-
+      
+      /*
+      // If you want to use AJAX instead of SSE, you can use this code block
       $.ajax({
         type: "POST",
-        url: '{% url "fingerprint_register" %}', // Replace with the correct URL
-        //url: "#",
+        url: "/transactions/fingerprint_register/",
         data: {
           location: location,
           csrfmiddlewaretoken: "{{ csrf_token }}",
@@ -71,7 +60,6 @@
         dataType: "json",
         success: function (response) {
           if ("message" in response) {
-            window.location.href = "{% url 'deposit_money' %}";
             // Do any additional actions on success
           } else if ("status" in response) {
             alert(response.status);
@@ -86,7 +74,9 @@
           // Handle the error condition
         },
       });
+      */
     });
   });
 </script>
-{% endcomment %}
+
+{% endblock %}
