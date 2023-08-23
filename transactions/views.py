@@ -18,7 +18,7 @@ from django.shortcuts import redirect
 from pyfingerprint.pyfingerprint import PyFingerprint
 
 from transactions.models import Transaction
-
+from django.http import StreamingHttpResponse
 
 ################
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
@@ -641,7 +641,6 @@ def fingerprint_register(request):
     
     return render(request, 'accounts/fingerprint.html')
 '''
-from django.http import StreamingHttpResponse
 
 def generate_response(location, finger):
     try:
@@ -653,8 +652,9 @@ def generate_response(location, finger):
 
             try:
                 i = finger.get_image()
-            except IOError:
+            except IOError as e:
                 yield "data: Fingerprint sensor not connected\n\n"
+                raise e
 
             if i == adafruit_fingerprint.OK:
                 yield "data: Fingerprint recorded\n\n"
