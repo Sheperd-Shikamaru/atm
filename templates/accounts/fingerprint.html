@@ -14,18 +14,17 @@
   </div>
 
   <div class="mt-5" style="display: flex; justify-content: center; color: red;">
-    <p id="error-message"></p>
+    <div id="message"></div>
   </div>
 
   <form id="fingerprint-form">
     {% csrf_token %}
     <input type="text" id="location" value="11" hidden />
     <div class="mt-5" style="display: flex; justify-content: center">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Enroll Fingerprint</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Enroll Fingerprint</button>
     </div>
   </form>
 
-  <div style="color: red;" id="message"></div>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -37,33 +36,15 @@
 
       var location = $("#location").val();
 
-      $.ajax({
-        url: "/transactions/fingerprint_register/",
-        method: "POST",
-        data: {
-            csrfmiddlewaretoken: "{{ csrf_token }}", // Include CSRF token
-            location: location
-        },
+      var eventSource = new EventSource("/transactions/fingerprint_register/");
+      eventSource.onmessage = function(event) {
+        $("#message").append(event.data + "<br>");
+      };
 
-        success: function (response) {
-          if (response.status == "Fingerprint recorded") {
-            $("#message").text("Fingerprint recorded successfully");
-          } else if (response.status == "An error occurred") {
-            $("#error-message").text("An error occurred");
-          } else if (response.status == "Place finger on sensor...") {
-            $("#message").text("Place finger on sensor...");
-          } else if (response.status == "Place same finger again...") {
-            $("#message").text("Place same finger again...");
-          } else if (response.status == "Remove finger") {
-            $("#message").text("Remove finger");
-          } else if (response.status == "Creating model...") {
-            $("#message").text("Creating model...");
-          }
-        },
-        error: function () {
-          $("#error-message").text("An error occurred");
-        },
-      });
+      eventSource.onclose = function() {
+        $("#message").append("Fingerprint registration process completed.<br>");
+        eventSource.close();
+      };
     });
   });
 </script>
