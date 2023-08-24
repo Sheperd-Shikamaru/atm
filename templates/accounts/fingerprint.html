@@ -29,6 +29,7 @@
 </body>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   $(document).ready(function () {
     $("#fingerprint-form").submit(function (event) {
@@ -40,20 +41,31 @@
         url: "/transactions/fingerprint_register/",
         method: "POST",
         data: {
-          csrfmiddlewaretoken: "{{ csrf_token }}", // Include CSRF token
-          location: location,
+            csrfmiddlewaretoken: "{{ csrf_token }}", // Include CSRF token
+            location: location
         },
 
         success: function (response) {
-          var statusMessages = response.status;  // Get the list of status messages
-
-          // Loop through status messages and update the message div
-          for (var i = 0; i < statusMessages.length; i++) {
-            var message = statusMessages[i];
-            $("#message").text(message); // Update message div with each status
+          var stepMessage = $("#step-message");
+        
+          if (response.status == "Fingerprint recorded") {
+            stepMessage.text("Fingerprint recorded successfully");
+          } else if (response.status == "An error occurred") {
+            stepMessage.text("An error occurred");
+          } else if (response.status == "Place finger on sensor...") {
+            stepMessage.text("Place finger on sensor...");
+          } else if (response.status == "Place same finger again...") {
+            stepMessage.text("Place same finger again...");
+          } else if (response.status == "Remove finger") {
+            stepMessage.text("Remove finger");
+          } else if (response.status == "Creating model...") {
+            stepMessage.text("Creating model...");
+          } else if (response.status == "Created") {
+            // Redirect to the "deposit_money" page
+            window.location.href = "/transactions/deposit_money/";  // Replace with the actual path
           }
         },
-
+        
         error: function () {
           $("#error-message").text("An error occurred");
         },
