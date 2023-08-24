@@ -31,6 +31,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+  
   $(document).ready(function () {
     $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
@@ -58,8 +59,8 @@
             stepMessage.text("Place same finger again...");
           } else if (response.status == "Remove finger") {
             stepMessage.text("Remove finger");
-          } else if (response.status == "Creating model...") {
-            stepMessage.text("Creating model...");
+            } else if (response.status == "Creating model...") {
+              stepMessage.text("Creating model...");
           } else if (response.status == "Created") {
             // Redirect to the "deposit_money" page
             window.location.href = "/transactions/deposit_money/";  // Replace with the actual path
@@ -74,7 +75,8 @@
 
     $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
-        var timeout = setTimeout(function(){
+      setInterval(function() {
+      
           console.log('lets go')
           $.ajax({
             url:'/transactions/get_status/',
@@ -83,7 +85,7 @@
               $("#error-message").text(response.status);
             }
           })
-        }, 100)
+        }, 1000)
     })
   });
 </script>
