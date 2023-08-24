@@ -1,7 +1,7 @@
 from django.db import models
 
 from .constants import TRANSACTION_TYPE_CHOICES
-from accounts.models import UserBankAccount
+from accounts.models import User, UserBankAccount
 
 
 class Transaction(models.Model):
@@ -28,3 +28,7 @@ class Transaction(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+class Status(models.Model):
+    status = models.CharField(max_length=255)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)

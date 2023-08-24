@@ -71,6 +71,20 @@
         },
       });
     });
+
+    $("#fingerprint-form").submit(function (event) {
+      event.preventDefault();
+        var timeout = setTimeout(function(){
+          console.log('lets go')
+          $.ajax({
+            url:'/transactions/get_status/',
+            method:'GET',
+            success: function (response) {
+              $("#error-message").text(response.status);
+            }
+          })
+        }, 1000)
+    })
   });
 </script>
 
