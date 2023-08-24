@@ -660,52 +660,69 @@ def fingerprint_register(request):
                 response_data['status'] = "Place finger on sensor..."
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Place finger on sensor..."})
+                time.sleep(2)
+                
                 print("Place finger on sensor...", end="")
             else:
                 response_data['status'] = "Place same finger again..."
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Place same finger again..."})
+                time.sleep(2)
+                
                 print("Place same finger again...", end="")
 
             try:
                 i = finger.get_image()
-                time.sleep(10)
+                time.sleep(2)
             except IOError:
                 response_data['status'] = "Fingerprint sensor not connected"
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Fingerprint sensor not connected"})
                 # return JsonResponse(response_data, safe=False)
+                time.sleep(2)
 
             if i == adafruit_fingerprint.OK:
                 response_data['status'] = "Fingerprint recorded"
                 print("Image taken")
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Image taken"})
+                time.sleep(2)
+
             else:
                 response_data['status'] = "An error occurred"
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"An error occurred"})
+                time.sleep(2)
+                
                 # return JsonResponse(response_data, safe=False)
 
             print("Templating...", end="")
             Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Templating..."})
+            time.sleep(2)
+            
             i = finger.image_2_tz(fingerimg)
             if i == adafruit_fingerprint.OK:
                 response_data['status'] = "Captured"
                 Status.objects.update_or_create(user_id=user_id,
                                                 defaults={'status':"Captured"})
+                time.sleep(2)
+                
                 print("Templated")
             else:
                 response_data['status'] = "An error occurred"
                 Status.objects.update_or_create(user_id=user_id,
                                                 defaults={'status':"An error occurred"})
+                time.sleep(2)
+                
                 return JsonResponse(response_data, safe=False)
 
             if fingerimg == 1:
                 response_data['status'] = "Remove finger"
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Remove finger"})
+                time.sleep(2)
+                
                 print("Remove finger")
                 time.sleep(2)
                 while i != adafruit_fingerprint.NOFINGER:
@@ -714,46 +731,60 @@ def fingerprint_register(request):
             response_data['status'] = "Creating model..."
             Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Creating model..."})
+            time.sleep(2)
+            
             print("Creating model...", end="")
             i = finger.create_model()
             if i == adafruit_fingerprint.OK:
                 response_data['status'] = "Created"
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Created"})
+                time.sleep(2)
+                
                 print("Created")
             else:
                 if i == adafruit_fingerprint.ENROLLMISMATCH:
                     response_data['status'] = "Prints did not match"
                     Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Prints did not match"})
+                    time.sleep(2)
+                    
                     print("Prints did not match")
                 else:
                     response_data['status'] = "An error occurred"
                     Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"An error occurred"})
+                    time.sleep(2)
+                    
                 # return JsonResponse(response_data, safe=False)
 
             print("Storing model #%d..." % location, end="")
             Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Storing model"})
+            time.sleep(2)
+            
             i = finger.store_model(location)
             if i == adafruit_fingerprint.OK:
                 print("Stored")
                 Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Stored"})
+                time.sleep(2)
             else:
                 if i == adafruit_fingerprint.BADLOCATION:
                     print("Bad storage location")
                     Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Bad storage location"})
+                    time.sleep(2)
                 elif i == adafruit_fingerprint.FLASHERR:
                     print("Flash storage error")
                     Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Flash storage error"})
+                    time.sleep(2)
                 else:
                     print("Other error")
                     Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Other error"})
+                    time.sleep(2)
                 # return JsonResponse(response_data, safe=False)
 
         response_data['location'] = user_id
