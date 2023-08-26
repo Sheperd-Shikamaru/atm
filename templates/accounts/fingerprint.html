@@ -83,7 +83,7 @@
             success: function (response) {
               $("#error-message").text(response.status);
               if (response.status == 'Stored'){
-                window.location.href = "/transactions/deposit/";
+                window.location.href = "{% url 'transactions:deposit_money' %};
               }
             }
           })
