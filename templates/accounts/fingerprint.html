@@ -77,60 +77,19 @@
       event.preventDefault();
       setInterval(function() {
       
-          console.log('lets go')
           $.ajax({
             url:'/transactions/get_status/',
             method:'GET',
             success: function (response) {
               $("#error-message").text(response.status);
-              if (response.status == 'Created'){
+              if (response.status == 'Stored'){
                 window.location.href = "/transactions/deposit_money/";
               }
             }
           })
-        }, 1000)
+        }, 5000)
     })
   });
 </script>
 
 {% endblock %}
-
-
-{% comment %}
-<script>
-  $(document).ready(function () {
-    $("#enroll-form").on("submit", function (event) {
-      event.preventDefault();
-
-      var location = $("#location").val();
-
-      $.ajax({
-        type: "POST",
-        url: '{% url "fingerprint_register" %}', // Replace with the correct URL
-        //url: "#",
-        data: {
-          location: location,
-          csrfmiddlewaretoken: "{{ csrf_token }}",
-        },
-        dataType: "json",
-        success: function (response) {
-          if ("message" in response) {
-            window.location.href = "{% url 'deposit_money' %}";
-            // Do any additional actions on success
-          } else if ("status" in response) {
-            alert(response.status);
-            // Do any additional actions on error
-          } else if ("error" in response) {
-            alert(response.error);
-            // Do any additional actions on error
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error(error);
-          // Handle the error condition
-        },
-      });
-    });
-  });
-</script>
-{% endcomment %}
