@@ -262,55 +262,6 @@ def get_num(max_number):
             pass
     return i
 
-
-# while True:
-#     print("----------------")
-#     if finger.read_templates() != adafruit_fingerprint.OK:
-#         raise RuntimeError("Failed to read templates")
-#     print("Fingerprint templates: ", finger.templates)
-#     if finger.count_templates() != adafruit_fingerprint.OK:
-#         raise RuntimeError("Failed to read templates")
-#     print("Number of templates found: ", finger.template_count)
-#     if finger.read_sysparam() != adafruit_fingerprint.OK:
-#         raise RuntimeError("Failed to get system parameters")
-#     print("Size of template library: ", finger.library_size)
-#     print("e) enroll print")
-#     print("f) find print")
-#     print("d) delete print")
-#     print("s) save fingerprint image")
-#     print("r) reset library")
-#     print("q) quit")
-#     print("----------------")
-#     c = input("> ")
-
-#     if c == "e":
-#         enroll_finger(get_num(finger.library_size))
-#     if c == "f":
-#         if get_fingerprint():
-#             print("Detected #", finger.finger_id, "with confidence", finger.confidence)
-#         else:
-#             print("Finger not found")
-#     if c == "d":
-#         if finger.delete_model(get_num(finger.library_size)) == adafruit_fingerprint.OK:
-#             print("Deleted!")
-#         else:
-#             print("Failed to delete")
-#     if c == "s":
-#         if save_fingerprint_image("fingerprint.png"):
-#             print("Fingerprint image saved")
-#         else:
-#             print("Failed to save fingerprint image")
-#     if c == "r":
-#         if finger.empty_library() == adafruit_fingerprint.OK:
-#             print("Library empty!")
-#         else:
-#             print("Failed to empty library")
-#     if c == "q":
-#         print("Exiting fingerprint example program")
-#         raise SystemExit
-
-
-################
 class TransactionRepostView(LoginRequiredMixin, ListView):
     template_name = 'transactions/transaction_report.html'
     model = Transaction
@@ -418,7 +369,9 @@ class DepositMoneyView(TransactionCreateMixin):
 
     def form_valid(self, form):
         amount = form.cleaned_data.get('amount')
+        print(f"amount {amount}")
         account = self.request.user.account
+        print(f"account = {account}")
 
         if not account.initial_deposit_date:
             now = timezone.now()
@@ -445,113 +398,9 @@ class DepositMoneyView(TransactionCreateMixin):
             self.request,
             f'R{amount} was deposited to your account successfully'
         )
-
+        print(f'R{amount} was deposited to your account successfully')
         return super().form_valid(form)
 
-'''
-def enroll_finger(location):
-        response_data = {}
-        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
-
-        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        
-        """Take a 2 finger images and template it, then store in 'location'"""
-        
-        for fingerimg in range(1, 3):
-            if fingerimg == 1:
-                response_data['status'] = "Place finger on sensor..."
-                print("Place finger on sensor...", end="")
-            else:
-                response_data['status'] = "Place same finger again..."
-                print("Place same finger again...", end="")
-
-            while True:
-                i = finger.get_image()
-                if i == adafruit_fingerprint.OK:
-                    response_data['status'] = "Fingerprint recorded"
-                    print("Image taken")
-                    break
-                if i == adafruit_fingerprint.NOFINGER:
-                    response_data['status'] = "."
-                    print(".", end="")
-                elif i == adafruit_fingerprint.IMAGEFAIL:
-                    response_data['status'] = "fingerprint error"
-                    print("Imaging error")
-                    return False
-                else:
-                    response_data['status'] = "An error occured"
-                    print("Other error")
-                    return False
-
-            print("Templating...", end="")
-            i = finger.image_2_tz(fingerimg)
-            if i == adafruit_fingerprint.OK:
-                response_data['status'] = "captured"
-                
-                print("Templated")
-            else:
-                if i == adafruit_fingerprint.IMAGEMESS:
-                    response_data['status'] = "Fingerprint too messy"
-                    print("Image too messy")
-                elif i == adafruit_fingerprint.FEATUREFAIL:
-                    response_data['status'] = "Could not identify features"
-                    print("Could not identify features")
-                elif i == adafruit_fingerprint.INVALIDIMAGE:
-                    response_data['status'] = "Fingerprint invalid"
-                    print("Image invalid")
-                else:
-                    response_data['status'] = "An error occured"
-                    print("Other error")
-                return False
-
-            if fingerimg == 1:
-                response_data['status'] = "Remove finger"
-                print("Remove finger")
-                time.sleep(2)
-                while i != adafruit_fingerprint.NOFINGER:
-                    i = finger.get_image()
-
-        response_data['status'] = "Creating model..."
-        print("Creating model...", end="")
-        i = finger.create_model()
-        if i == adafruit_fingerprint.OK:
-            response_data['status'] = "Created"
-            print("Created")
-        else:
-            if i == adafruit_fingerprint.ENROLLMISMATCH:
-                response_data['status'] = "Prints did not match"
-                print("Prints did not match")
-            else:
-                response_data['status'] = "An error occured"
-                print("Other error")
-            return False
-
-        print("Storing model #%d..." % location, end="")
-        i = finger.store_model(location)
-        if i == adafruit_fingerprint.OK:
-            print("Stored")
-        else:
-            if i == adafruit_fingerprint.BADLOCATION:
-                print("Bad storage location")
-            elif i == adafruit_fingerprint.FLASHERR:
-                print("Flash storage error")
-            else:
-                print("Other error")
-            return False
-
-        return True
-        # return JsonResponse(json_response, safe=False)
-        
-def fingerprint_register(request):
-    
-    # pylint: disable=too-many-statements
-    
-    if request.method == 'POST':
-        location = request.POST.get('location')
-        enroll_finger(location)
-    return render(request, 'accounts/fingerprint.html')
-'''
-#######################
 
 '''
 def enroll_finger(location):
@@ -641,6 +490,29 @@ def fingerprint_register(request):
     
     return render(request, 'accounts/fingerprint.html')
 '''
+
+
+class WithdrawMoneyView(TransactionCreateMixin):
+    form_class = WithdrawForm
+    title = 'Withdraw Money from Your Account'
+
+    def get_initial(self):
+        initial = {'transaction_type': WITHDRAWAL}
+        return initial
+
+    def form_valid(self, form):
+        amount = form.cleaned_data.get('amount')
+
+        self.request.user.account.balance -= form.cleaned_data.get('amount')
+        self.request.user.account.save(update_fields=['balance'])
+
+        messages.success(
+            self.request,
+            f'Successfully withdrawn R{amount} from your account'
+        )
+
+        return super().form_valid(form)
+
 
 
 def fingerprint_register(request):
@@ -779,8 +651,6 @@ def fingerprint_register(request):
                             defaults={'status':"An error occurred"})
                 time.sleep(1)
                 
-            # return JsonResponse(response_data, safe=False)
-
         print("Storing model #%d..." % location, end="")
         Status.objects.update_or_create(user_id=user_id,
                             defaults={'status':"Storing model"})
@@ -800,24 +670,3 @@ def get_status(request):
     except Status.DoesNotExist:
         status = "No status"
     return JsonResponse({'status': status}, safe=False)
-
-class WithdrawMoneyView(TransactionCreateMixin):
-    form_class = WithdrawForm
-    title = 'Withdraw Money from Your Account'
-
-    def get_initial(self):
-        initial = {'transaction_type': WITHDRAWAL}
-        return initial
-
-    def form_valid(self, form):
-        amount = form.cleaned_data.get('amount')
-
-        self.request.user.account.balance -= form.cleaned_data.get('amount')
-        self.request.user.account.save(update_fields=['balance'])
-
-        messages.success(
-            self.request,
-            f'Successfully withdrawn R{amount} from your account'
-        )
-
-        return super().form_valid(form)
