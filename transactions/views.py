@@ -648,10 +648,12 @@ def fingerprint_register(request):
 
     if request.method == 'POST':
         location = request.POST.get('location')
+        location = int(location)
         
         response_data = {}
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        print(f"finger = {finger}")
 
         """Take 2 finger images and template it, then store in 'location'"""
         user_id = request.user.id
