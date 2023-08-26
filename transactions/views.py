@@ -671,31 +671,32 @@ def fingerprint_register(request):
                 
                 print("Place same finger again...", end="")
 
-            try:
-                i = finger.get_image()
-                time.sleep(2)
-            except IOError:
-                response_data['status'] = "Fingerprint sensor not connected"
-                Status.objects.update_or_create(user_id=user_id,
-                                defaults={'status':"Fingerprint sensor not connected"})
-                # return JsonResponse(response_data, safe=False)
-                time.sleep(2)
+            while True:
+                try:
+                    i = finger.get_image()
+                    time.sleep(2)
+                except IOError:
+                    response_data['status'] = "Fingerprint sensor not connected"
+                    Status.objects.update_or_create(user_id=user_id,
+                                    defaults={'status':"Fingerprint sensor not connected"})
+                    # return JsonResponse(response_data, safe=False)
+                    time.sleep(2)
 
-            if i == adafruit_fingerprint.OK:
-                response_data['status'] = "Fingerprint recorded"
-                print("Image taken")
-                Status.objects.update_or_create(user_id=user_id,
-                                defaults={'status':"Image taken"})
-                time.sleep(2)
+                if i == adafruit_fingerprint.OK:
+                    response_data['status'] = "Fingerprint recorded"
+                    print("Image taken")
+                    Status.objects.update_or_create(user_id=user_id,
+                                    defaults={'status':"Image taken"})
+                    time.sleep(2)
+                    break
 
-            else:
-                response_data['status'] = "An error occurred"
-                Status.objects.update_or_create(user_id=user_id,
-                                defaults={'status':"An error occurred"})
-                time.sleep(2)
+                else:
+                    response_data['status'] = "An error occurred"
+                    # Status.objects.update_or_create(user_id=user_id,
+                    #                 defaults={'status':"An error occurred"})
+                    time.sleep(2)
+                    return False
                 
-                # return JsonResponse(response_data, safe=False)
-
             print("Templating...", end="")
             Status.objects.update_or_create(user_id=user_id,
                                 defaults={'status':"Templating..."})
