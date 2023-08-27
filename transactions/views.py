@@ -262,6 +262,7 @@ def get_num(max_number):
             pass
     return i
 
+
 class TransactionRepostView(LoginRequiredMixin, ListView):
     template_name = 'transactions/transaction_report.html'
     model = Transaction
@@ -366,12 +367,14 @@ class TransactionCreateMixin(LoginRequiredMixin, CreateView):
 class DepositMoneyView(TransactionCreateMixin):
     form_class = DepositForm
     title = 'Deposit Money to Your Account'
+    
+    def get_initial(self):
+        initial = {'transaction_type': DEPOSIT}
+        return initial
 
     def form_valid(self, form):
         amount = form.cleaned_data.get('amount')
-        print(f"amount {amount}")
         account = self.request.user.account
-        print(f"account = {account}")
 
         if not account.initial_deposit_date:
             now = timezone.now()
@@ -398,7 +401,7 @@ class DepositMoneyView(TransactionCreateMixin):
             self.request,
             f'R{amount} was deposited to your account successfully'
         )
-        print(f'R{amount} was deposited to your account successfully')
+
         return super().form_valid(form)
 
 

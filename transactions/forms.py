@@ -36,7 +36,7 @@ class DepositForm(TransactionForm):
 
         if amount < min_deposit_amount:
             raise forms.ValidationError(
-                f'You need to deposit at least {min_deposit_amount} R'
+                f'You need to deposit at least R {min_deposit_amount}'
             )
 
         return amount
