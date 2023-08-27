@@ -1,11 +1,11 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth.views import LoginView
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from .forms import UserRegistrationForm, UserAddressForm
+from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
 
 
 User = get_user_model()
@@ -59,6 +59,23 @@ class UserRegistrationView(TemplateView):
             kwargs['address_form'] = UserAddressForm()
 
         return super().get_context_data(**kwargs)
+    
+def custom_login(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['username']  # 'username' field is used for email
+            password = form.cleaned_data['password']
+
+            user = authenticate(request, email=email, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect('transactions:report')  # Redirect using app namespace
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'accounts/user_login.html', {'form': form})
 
 
 class UserLoginView(LoginView):

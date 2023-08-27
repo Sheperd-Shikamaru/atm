@@ -1,6 +1,6 @@
 from django import forms
 from django.conf import settings
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
 
 from .models import User, BankAccountType, UserBankAccount, UserAddress
@@ -84,3 +84,6 @@ class UserRegistrationForm(UserCreationForm):
                 )
             )
         return user
+
+class CustomLoginForm(AuthenticationForm):
+    pass  # You can leave it empty or add any customization you need
