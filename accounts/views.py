@@ -71,7 +71,7 @@ def custom_login(request):
 
             if user is not None:
                 login(request, user)
-                return redirect('transactions:report')  # Redirect using app namespace
+                return redirect('transactions:transaction_report')  # Redirect using app namespace
     else:
         form = CustomLoginForm()
 
