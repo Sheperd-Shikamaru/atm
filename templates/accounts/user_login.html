@@ -20,19 +20,30 @@
             {{ hidden_field.errors }}
             {{ hidden_field }}
         {% endfor %}
-        {% for field in form.visible_fields %}
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ field.id_for_label }}">
-                {{ field.label }}
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.username.id_for_label }}">
+                {{ form.username.label }}
             </label>
-            <input class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ field.name }}" id="{{ field.id_for_label }}" type="{{ field.widget_type }}">
-        </div>
-            {% if field.errors %}
-                {% for error in field.errors %}
+            <input class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" type="{{ form.username.field.widget.input_type }}">
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
                 <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
                 {% endfor %}
             {% endif %}
-        {% endfor %}
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.password.id_for_label }}">
+                {{ form.password.label }}
+            </label>
+            <input class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" type="{{ form.password.field.widget.input_type }}">
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
 
         <div class="flex items-center justify-between">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
