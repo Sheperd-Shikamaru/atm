@@ -86,7 +86,7 @@ def custom_login(request):
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         print(f"uart = {uart}")
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        print(f"finger = {finger}")
+        print(f"finger = {finger.finger_id}")
         
         if form.is_valid():
             print("valid")
