@@ -139,4 +139,6 @@ class LogoutView(RedirectView):
             GPIO.output(LED_PIN,False)
             GPIO.output(BUZZER_PIN,False)
             time.sleep(TIMER)
+        GPIO.cleanup()
+        
         return super().get_redirect_url(*args, **kwargs)
