@@ -89,6 +89,7 @@ def custom_login(request):
         print(f"finger = {finger}")
         
         if form.is_valid():
+            print("valid")
             email = form.cleaned_data['username']  # 'username' field is used for email
             password = form.cleaned_data['password']
             
