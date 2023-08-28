@@ -90,7 +90,7 @@
 
     else {
       $.ajax({
-        url: "/transactions/fingerprint_login/",
+        url: "/accounts/user_login/",
         method: "POST",
         data: {
             csrfmiddlewaretoken: "{{ csrf_token }}",

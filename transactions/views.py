@@ -522,8 +522,6 @@ def fingerprint_register(request):
     # pylint: disable=too-many-statements
 
     if request.method == 'POST':
-        location = request.POST.get('location')
-        location = int(location)
         
         response_data = {}
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
@@ -531,6 +529,7 @@ def fingerprint_register(request):
 
         """Take 2 finger images and template it, then store in 'location'"""
         user_id = request.user.id
+        location = int(user_id)
         for fingerimg in range(1, 3):
             if fingerimg == 1:
                 response_data['status'] = "Place finger on sensor..."
