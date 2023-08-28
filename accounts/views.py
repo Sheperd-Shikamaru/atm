@@ -88,25 +88,24 @@ def custom_login(request):
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
         print(f"finger = {finger.finger_id}")
         
-        if form.is_valid():
-            print("valid")
-            email = form.cleaned_data['username']  # 'username' field is used for email
-            password = form.cleaned_data['password']
-            
-            
-            if get_fingerprint(finger):
-                user_id=finger.finger_id
-                print("Detected #", finger.finger_id, "with confidence", finger.confidence)
-                user_obj = User.objects.filter(id=user_id).first()
-                email = user_obj.email
-                print("email = ",email)
-                user = authenticate(request, email=email, password=password)
-            else:
-                user = None
+        print("valid")
+        # email = form.cleaned_data['username']  # 'username' field is used for email
+        password = form.cleaned_data['password']
+        
+        
+        if get_fingerprint(finger):
+            user_id=finger.finger_id
+            print("Detected #", finger.finger_id, "with confidence", finger.confidence)
+            user_obj = User.objects.filter(id=user_id).first()
+            email = user_obj.email
+            print("email = ",email)
+            user = authenticate(request, email=email, password=password)
+        else:
+            user = None
 
-            if user is not None:
-                login(request, user)
-                return redirect('transactions:transaction_report')  # Redirect using app namespace
+        if user is not None:
+            login(request, user)
+            return redirect('transactions:transaction_report')  # Redirect using app namespace
     else:
         form = CustomLoginForm()
 
