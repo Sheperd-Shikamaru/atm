@@ -90,7 +90,7 @@
 
     else {
       $.ajax({
-        url: "/accounts/user_login/",
+        url: "/accounts/login/",
         method: "POST",
         data: {
             csrfmiddlewaretoken: "{{ csrf_token }}",
@@ -104,7 +104,7 @@
             stepMessage.text("Place your finger on the sensor...");
           } else if (response.status == "Finger not found") {
             stepMessage.text("Finger not found");
-          } else if (response.status == "Place finger on sensor...") {
+          } else if (response.status == "Remove finger") {
             stepMessage.text("Remove finger");
           } else if (response.status == "Searching...") {
             stepMessage.text("Searching...");
