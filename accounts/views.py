@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
 from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
-
+from django.http import JsonResponse
 from pyfingerprint.pyfingerprint import PyFingerprint
 import adafruit_fingerprint
 import time
@@ -103,9 +103,15 @@ def custom_login(request):
         else:
             user = None
 
+        # if user is not None:
+        #     login(request, user)
+        #     return redirect('transactions:transaction_report')  # Redirect using app namespace
+        
         if user is not None:
             login(request, user)
-            return redirect('transactions:transaction_report')  # Redirect using app namespace
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
     else:
         form = CustomLoginForm()
 

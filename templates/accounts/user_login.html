@@ -99,7 +99,10 @@
 
         success: function (response) {
           var stepMessage = $("#step-message");
-        
+          url = '/transactions/transaction_report/'
+          if (response.success) {
+            window.location.href = url;
+          }
           if (response.status == "Place your finger on the sensor...") {
             stepMessage.text("Place your finger on the sensor...");
           } else if (response.status == "Finger not found") {
