@@ -7,6 +7,10 @@ from django.views.generic import TemplateView, RedirectView
 
 from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
 
+from pyfingerprint.pyfingerprint import PyFingerprint
+import adafruit_fingerprint
+import time
+import serial
 
 User = get_user_model()
 
@@ -60,14 +64,42 @@ class UserRegistrationView(TemplateView):
 
         return super().get_context_data(**kwargs)
     
+def get_fingerprint(finger):
+
+    """Get a finger print image, template it, and see if it matches!"""
+    print("Waiting for image...")
+    while finger.get_image() != adafruit_fingerprint.OK:
+        pass
+    print("Templating...")
+    if finger.image_2_tz(1) != adafruit_fingerprint.OK:
+        return False
+    print("Searching...")
+    if finger.finger_search() != adafruit_fingerprint.OK:
+        return False
+    return True
+
+    
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
+        
+        uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+        finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        
         if form.is_valid():
             email = form.cleaned_data['username']  # 'username' field is used for email
             password = form.cleaned_data['password']
-
-            user = authenticate(request, email=email, password=password)
+            
+            
+            if get_fingerprint(finger):
+                user_id=finger.finger_id
+                print("Detected #", finger.finger_id, "with confidence", finger.confidence)
+                user_obj = User.objects.filter(id=user_id).first()
+                email = user_obj.email
+                print("email = ",email)
+                user = authenticate(request, email=email, password=password)
+            else:
+                user = None
 
             if user is not None:
                 login(request, user)
