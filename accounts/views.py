@@ -4,13 +4,14 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import HttpResponseRedirect, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
-
+from transactions.constants import *
 from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
 from django.http import JsonResponse
 from pyfingerprint.pyfingerprint import PyFingerprint
 import adafruit_fingerprint
-import time
 import serial
+import RPi.GPIO as GPIO
+import time
 
 User = get_user_model()
 
@@ -117,7 +118,6 @@ def custom_login(request):
 
     return render(request, 'accounts/user_login.html', {'form': form})
 
-
 class UserLoginView(LoginView):
     # template_name='accounts/fingerprint.html'
     template_name='accounts/user_login.html'
@@ -130,4 +130,13 @@ class LogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             logout(self.request)
+            
+        for i in range(5):
+            GPIO.output(LED_PIN,True)
+            GPIO.output(BUZZER_PIN,True)
+            time.sleep(TIMER)
+            
+            GPIO.output(LED_PIN,False)
+            GPIO.output(BUZZER_PIN,False)
+            time.sleep(TIMER)
         return super().get_redirect_url(*args, **kwargs)

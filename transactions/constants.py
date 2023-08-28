@@ -7,3 +7,7 @@ TRANSACTION_TYPE_CHOICES = (
     (WITHDRAWAL, 'Withdrawal'),
     (INTEREST, 'Interest'),
 )
+
+LED_PIN = 40
+BUZZER_PIN = 38
+TIMER = 0.55

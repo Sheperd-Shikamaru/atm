@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, ListView
 
-from transactions.constants import DEPOSIT, WITHDRAWAL
+from transactions.constants import *
 from transactions.forms import (
     DepositForm,
     TransactionDateRangeForm,
@@ -24,17 +24,12 @@ from transactions.models import Status, Transaction
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-import time
-
 import serial
 
 import adafruit_fingerprint
 import RPi.GPIO as GPIO
 import time
 
-LED_PIN = 40
-BUZZER_PIN = 38
-TIMER = 0.55
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LED_PIN, GPIO.OUT)
@@ -42,7 +37,6 @@ GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
 # import board
 # uart = busio.UART(board.TX, board.RX, baudrate=57600)
-
 
 
 ##################################################
