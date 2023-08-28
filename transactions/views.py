@@ -419,7 +419,6 @@ class DepositMoneyView(TransactionCreateMixin):
             GPIO.output(LED_PIN,False)
             GPIO.output(BUZZER_PIN,False)
             time.sleep(TIMER)
-        GPIO.cleanup()
 
         return super().form_valid(form)
 
@@ -452,8 +451,6 @@ class WithdrawMoneyView(TransactionCreateMixin):
             GPIO.output(LED_PIN,False)
             GPIO.output(BUZZER_PIN,False)
             time.sleep(TIMER)
-        GPIO.cleanup()
-
 
         return super().form_valid(form)
 
