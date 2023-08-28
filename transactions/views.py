@@ -29,7 +29,16 @@ import time
 import serial
 
 import adafruit_fingerprint
+import RPi.GPIO as GPIO
+import time
 
+LED_PIN = 40
+BUZZER_PIN = 38
+TIMER = 0.55
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LED_PIN, GPIO.OUT)
+GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
 # import board
 # uart = busio.UART(board.TX, board.RX, baudrate=57600)
@@ -513,6 +522,18 @@ class WithdrawMoneyView(TransactionCreateMixin):
             self.request,
             f'Successfully withdrawn R{amount} from your account'
         )
+
+        # loop through 6 times, on/off for .55 second
+        for i in range(6):
+            GPIO.output(LED_PIN,True)
+            GPIO.output(BUZZER_PIN,True)
+            time.sleep(TIMER)
+            
+            GPIO.output(LED_PIN,False)
+            GPIO.output(BUZZER_PIN,False)
+            time.sleep(TIMER)
+        GPIO.cleanup()
+
 
         return super().form_valid(form)
 
