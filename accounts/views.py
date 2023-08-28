@@ -81,6 +81,7 @@ def get_fingerprint(finger):
     
 def custom_login(request):
     if request.method == 'POST':
+        print("hello")
         form = CustomLoginForm(request, data=request.POST)
         
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
