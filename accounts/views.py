@@ -81,11 +81,12 @@ def get_fingerprint(finger):
     
 def custom_login(request):
     if request.method == 'POST':
-        print("hello")
         form = CustomLoginForm(request, data=request.POST)
-        
+        print(f"form = {form}")
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
+        print(f"uart = {uart}")
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+        print(f"finger = {finger}")
         
         if form.is_valid():
             email = form.cleaned_data['username']  # 'username' field is used for email
