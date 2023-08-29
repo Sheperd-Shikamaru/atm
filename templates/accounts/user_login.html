@@ -132,7 +132,7 @@
           $.ajax({
             url:'/accounts/get_status_on_login/',
             method:'GET',
-            data:{"token":{{csrf_token}},
+            data:{"token":"{{csrf_token}}"},
             success: function (response) {
               $("#error-message").text(response.status);
               if (response.status == 'Stored'){
