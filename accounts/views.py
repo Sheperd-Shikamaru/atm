@@ -69,15 +69,12 @@ class UserRegistrationView(TemplateView):
 def get_fingerprint(finger,token):
 
     """Get a finger print image, template it, and see if it matches!"""
-    print("Waiting for image...")
     TokenStatus.objects.update_or_create(token=token, defaults={'status': "Waiting for image..."}) 
     while finger.get_image() != adafruit_fingerprint.OK:
         pass
-    print("Templating...")
     TokenStatus.objects.update_or_create(token=token, defaults={'status': "Templating..."})
     if finger.image_2_tz(1) != adafruit_fingerprint.OK:
         return False
-    print("Searching...")
     TokenStatus.objects.update_or_create(token=token, defaults={'status': "Searching..."})
     if finger.finger_search() != adafruit_fingerprint.OK:
         return False
@@ -87,32 +84,20 @@ def get_fingerprint(finger,token):
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
-        print(f"form = {form}")
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
-        print(f"uart = {uart}")
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        print(f"finger = {finger.finger_id}")
         
-        # email = form.cleaned_data['username']  # 'username' field is used for email
         password = form.cleaned_data['password']
-        # token = form.cleaned_data['token']
-        print(f"password = {password}")
         token = form.cleaned_data['username']
-        print(f"token = {token}")
+        
         if get_fingerprint(finger,token):
             user_id=finger.finger_id
-            print("Detected #", finger.finger_id, "with confidence", finger.confidence)
             user_obj = User.objects.filter(id=user_id).first()
             email = user_obj.email
-            print("email = ",email)
             user = authenticate(request, email=email, password=password)
         else:
             user = None
 
-        # if user is not None:
-        #     login(request, user)
-        #     return redirect('transactions:transaction_report')  # Redirect using app namespace
-        
         if user is not None:
             login(request, user)
             TokenStatus.objects.update_or_create(token=token, defaults={'status': "Authentication Success"})
