@@ -125,13 +125,14 @@
     }
     });
 
-    /* $("#fingerprint-form").submit(function (event) {
+    $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
       setInterval(function() {
       
           $.ajax({
-            url:'/transactions/search_status/',
+            url:'/accounts/get_status_on_login/',
             method:'GET',
+            data:{}
             success: function (response) {
               $("#error-message").text(response.status);
               if (response.status == 'Stored'){
@@ -139,9 +140,10 @@
               }
             }
           })
-        }, 5000)
-    }) */
+        }, 2000)
+    })
   });
+
 </script>
 
 {% endblock %}
