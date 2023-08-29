@@ -17,7 +17,7 @@
 <hr>
 <div class="w-full mt-10">
     <form id="fingerprint-form" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        
+        <input type="text" name="token" value="{{csrf_token}}"
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
             {{ hidden_field }}
@@ -27,17 +27,17 @@
               style="display: flex; justify-content: center; height: 160px;"
               src="https://th.bing.com/th/id/R.cb6e093978097bb213790ff9ea8da39d?rik=bcZFpdG5Lmr9fQ&riu=http%3a%2f%2fpngimg.com%2fuploads%2ffingerprint%2ffingerprint_PNG82.png&ehk=dGCsUF3WVUjHQKZXOgOyM4u0exPHiFO%2fq90rjQ7Mxqg%3d&risl=&pid=ImgRaw&r=0"/>
           </div>
-        {% comment %} <div class="mb-4">
+        <div class="mb-4" style="display:none">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.username.id_for_label }}">
                 {{ form.username.label }}
             </label>
-            <input class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" type="{{ form.username.field.widget.input_type }}">
+            <input value="{{csrf_token}}" class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" type="{{ form.username.field.widget.input_type }}">
             {% if form.username.errors %}
                 {% for error in form.username.errors %}
                 <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
                 {% endfor %}
             {% endif %}
-        </div> {% endcomment %}
+        </div>
 
         <div class="mt-5" style="display: flex; justify-content: center; color: red; font-size: 20px;">
             <p id="error-message"></p>
