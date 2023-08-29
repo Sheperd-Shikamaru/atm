@@ -130,6 +130,7 @@
           $.ajax({
             url:'/accounts/get_status_on_login/',
             method:'GET',
+            data:{}
             success: function (response) {
               $("#error-message").text(response.status);
               if (response.status == 'Stored'){
