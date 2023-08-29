@@ -17,7 +17,6 @@
 <hr>
 <div class="w-full mt-10">
     <form id="fingerprint-form" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <input type="text" name="token" value="{{csrf_token}}"
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
             {{ hidden_field }}
@@ -31,7 +30,7 @@
             <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.username.id_for_label }}">
                 {{ form.username.label }}
             </label>
-            <input value="{{csrf_token}}" class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" type="{{ form.username.field.widget.input_type }}">
+            <input id="username-input" value="{{csrf_token}}" class="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" type="{{ form.username.field.widget.input_type }}">
             {% if form.username.errors %}
                 {% for error in form.username.errors %}
                 <p class="text-red-600 text-sm italic pb-2">{{ error }}</p>
@@ -79,6 +78,7 @@
       {% comment %} event.preventDefault(); {% endcomment %}
 
       var password = $("#password-input").val().trim();
+      var username = $("#username-input").val();
 
       if (password === '') {
         Swal.fire({
@@ -98,6 +98,7 @@
         data: {
             csrfmiddlewaretoken: "{{ csrf_token }}",
             password: password
+            username: username
         },
 
         success: function (response) {
