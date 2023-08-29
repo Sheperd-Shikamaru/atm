@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import HttpResponseRedirect, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
+from accounts.models import TokenStatus
 from transactions.constants import *
 from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
 from django.http import JsonResponse
@@ -65,16 +66,19 @@ class UserRegistrationView(TemplateView):
 
         return super().get_context_data(**kwargs)
     
-def get_fingerprint(finger):
+def get_fingerprint(finger,token):
 
     """Get a finger print image, template it, and see if it matches!"""
     print("Waiting for image...")
+    TokenStatus.objects.update_or_create(token=token, defaults={'status': "Waiting for image..."}) 
     while finger.get_image() != adafruit_fingerprint.OK:
         pass
     print("Templating...")
+    TokenStatus.objects.update_or_create(token=token, defaults={'status': "Templating..."})
     if finger.image_2_tz(1) != adafruit_fingerprint.OK:
         return False
     print("Searching...")
+    TokenStatus.objects.update_or_create(token=token, defaults={'status': "Searching..."})
     if finger.finger_search() != adafruit_fingerprint.OK:
         return False
     return True
@@ -93,8 +97,9 @@ def custom_login(request):
         password = form.cleaned_data['password']
         
         
-        
-        if get_fingerprint(finger):
+        token = request.POST.get('token')
+        print(f"token = {token}")
+        if get_fingerprint(finger,token):
             user_id=finger.finger_id
             print("Detected #", finger.finger_id, "with confidence", finger.confidence)
             user_obj = User.objects.filter(id=user_id).first()
@@ -110,8 +115,13 @@ def custom_login(request):
         
         if user is not None:
             login(request, user)
+            TokenStatus.objects.update_or_create(token=token, defaults={'status': "Authentication Success"})
             return JsonResponse({'success': True})
         else:
+            TokenStatus.objects.update_or_create(token=token, defaults={'status': "Authentication Failed"}) 
+            print("Authentication failed")
+            # return redirect('accounts:user_login')  # Redirect using app namespace
+            
             return JsonResponse({'success': False})
     else:
         form = CustomLoginForm()
@@ -119,9 +129,10 @@ def custom_login(request):
     return render(request, 'accounts/user_login.html', {'form': form})
 
 def get_status_on_login(request):
-    user_id = request.user.id
+    token = request.GET.get('token')
+    print(f"token = {token}")
     try:
-        status = TokenStatus.objects.get(user_id=user_id).status
+        status = TokenStatus.objects.get(token=token).status
     except TokenStatus.DoesNotExist:
         status = "No status"
     return JsonResponse({'status': status}, safe=False)
