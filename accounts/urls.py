@@ -22,5 +22,10 @@ urlpatterns = [
     path(
         "login/", views.custom_login, 
         name="user_login"
-        )
+        ),
+    
+    path(
+        "get_status_on_login/", views.get_status_on_login,
+        name="get_status_on_login"
+    )
 ]

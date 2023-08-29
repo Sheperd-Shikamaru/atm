@@ -122,3 +122,7 @@ class UserAddress(models.Model):
 
     def __str__(self):
         return self.user.email
+
+class TokenStatus(models.Model):
+    status = models.CharField(max_length=255)
+    token = models.CharField(max_length=512)

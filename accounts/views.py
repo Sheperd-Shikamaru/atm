@@ -83,15 +83,15 @@ def get_fingerprint(finger):
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
-        print(f"form = {form}")
+        
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         print(f"uart = {uart}")
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
         print(f"finger = {finger.finger_id}")
         
-        print("valid")
         # email = form.cleaned_data['username']  # 'username' field is used for email
         password = form.cleaned_data['password']
+        
         
         
         if get_fingerprint(finger):
@@ -118,6 +118,15 @@ def custom_login(request):
 
     return render(request, 'accounts/user_login.html', {'form': form})
 
+def get_status_on_login(request):
+    user_id = request.user.id
+    try:
+        status = TokenStatus.objects.get(user_id=user_id).status
+    except TokenStatus.DoesNotExist:
+        status = "No status"
+    return JsonResponse({'status': status}, safe=False)
+
+
 class UserLoginView(LoginView):
     # template_name='accounts/fingerprint.html'
     template_name='accounts/user_login.html'
@@ -139,6 +148,5 @@ class LogoutView(RedirectView):
             GPIO.output(LED_PIN,False)
             GPIO.output(BUZZER_PIN,False)
             time.sleep(TIMER)
-        GPIO.cleanup()
         
         return super().get_redirect_url(*args, **kwargs)
