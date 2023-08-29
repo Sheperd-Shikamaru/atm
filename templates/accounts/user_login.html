@@ -1,3 +1,5 @@
+
+
 {% extends 'core/base.html' %}
 
 {% block head_title %}Banking System{% endblock %}
@@ -16,7 +18,6 @@
 <div class="w-full mt-10">
     <form id="fingerprint-form" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         
-        <input type="text" name="token" value="{{csrf_token}}">
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
             {{ hidden_field }}
@@ -124,14 +125,13 @@
     }
     });
 
-    $("#fingerprint-form").submit(function (event) {
+    /* $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
       setInterval(function() {
       
           $.ajax({
-            url:'/accounts/get_status_on_login/',
+            url:'/transactions/search_status/',
             method:'GET',
-            data:{}
             success: function (response) {
               $("#error-message").text(response.status);
               if (response.status == 'Stored'){
@@ -139,8 +139,8 @@
               }
             }
           })
-        }, 2000)
-    })
+        }, 5000)
+    }) */
   });
 </script>
 
