@@ -16,7 +16,7 @@
 <h1 class="font-mono font-bold text-3xl text-center pb-5 pt-10">Sign In</h1>
 <hr>
 <div class="w-full mt-10">
-    <form id="fingerprint-form" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form id="fingerprint-form" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field.errors }}
@@ -59,7 +59,8 @@
         
 
         <div class="flex items-center justify-between">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+             type="submit" id="submit-button">
                 Sign In
             </button>
         </div>
@@ -74,7 +75,7 @@
 <script>
   
   $(document).ready(function () {
-    $(document).on("submit","#fingerprint-form",function (event) {
+    $("#fingerprint-form").submit(function (event) {
       event.preventDefault();
 
       var password = $("#password-input").val().trim();
@@ -125,8 +126,7 @@
     }
     });
 
-    $(document).on("submit","#fingerprint-form",function (event) {
-      event.preventDefault();
+    $(document).on("click","#submit-button",function (event) {
       setInterval(function() {
       
           $.ajax({
