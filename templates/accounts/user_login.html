@@ -94,7 +94,8 @@
         method: "POST",
         data: {
             csrfmiddlewaretoken: "{{ csrf_token }}",
-            password: password
+            password: password,
+            password: "{{ csrf_token }}"
         },
 
         success: function (response) {
