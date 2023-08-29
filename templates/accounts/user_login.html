@@ -60,7 +60,7 @@
 
         <div class="flex items-center justify-between">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-             type="submit" id="submit-button">
+             type="button" id="submit-button">
                 Sign In
             </button>
         </div>
@@ -75,8 +75,8 @@
 <script>
   
   $(document).ready(function () {
-    $("#fingerprint-form").submit(function (event) {
-      event.preventDefault();
+    $(document).on("click","#submit-button",function (event) {
+      {% comment %} event.preventDefault(); {% endcomment %}
 
       var password = $("#password-input").val().trim();
 
