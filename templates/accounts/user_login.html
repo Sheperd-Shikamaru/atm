@@ -128,7 +128,7 @@
       setInterval(function() {
       
           $.ajax({
-            url:'/transactions/search_status/',
+            url:'/transactions/get_status_on_login/',
             method:'GET',
             success: function (response) {
               $("#error-message").text(response.status);
