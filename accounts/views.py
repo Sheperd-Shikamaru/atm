@@ -97,7 +97,7 @@ def custom_login(request):
         password = form.cleaned_data['password']
         # token = form.cleaned_data['token']
         print(f"password = {password}")
-        token = request.POST.get('token')
+        token = form.cleaned_data['username']
         print(f"token = {token}")
         if get_fingerprint(finger,token):
             user_id=finger.finger_id
