@@ -84,6 +84,7 @@ def get_fingerprint(finger,token):
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
+        print(f'form = {form}')
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
         
