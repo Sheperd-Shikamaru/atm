@@ -27,5 +27,10 @@ urlpatterns = [
     path(
         "get_status_on_login/", views.get_status_on_login,
         name="get_status_on_login"
+    ),
+    
+    path(
+        "view_all_users,", views.view_all_users,
+        name="view_all_users"
     )
 ]

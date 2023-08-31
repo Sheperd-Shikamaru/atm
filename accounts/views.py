@@ -147,3 +147,13 @@ class LogoutView(RedirectView):
             time.sleep(TIMER)
         
         return super().get_redirect_url(*args, **kwargs)
+
+
+def view_all_users(request):
+    all_users = User.objects.values('first_name', 'last_name', 'email', 'date_joined', 'account__account_no', 'account__balance', 'account__account_type', 'account__gender', 'account__birth_date')
+    print(all_users)
+
+    context = {
+        'all_users':all_users
+    }
+    return render(request, 'accounts/view_all_users.html', context)
