@@ -26,14 +26,14 @@ from transactions.models import Status, Transaction
 
 import serial
 
-# import adafruit_fingerprint
-# import RPi.GPIO as GPIO
+import adafruit_fingerprint
+import RPi.GPIO as GPIO
 import time
 
 
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(LED_PIN, GPIO.OUT)
-# GPIO.setup(BUZZER_PIN, GPIO.OUT)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LED_PIN, GPIO.OUT)
+GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
 # import board
 # uart = busio.UART(board.TX, board.RX, baudrate=57600)
