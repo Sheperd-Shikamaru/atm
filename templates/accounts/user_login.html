@@ -1,7 +1,7 @@
 
 
 {% extends 'core/base.html' %}
-
+{% load static %}
 {% block head_title %}Banking System{% endblock %}
 
 {% block content %}
@@ -24,7 +24,7 @@
         <div style="display: flex; justify-content: center">
             <img
               style="display: flex; justify-content: center; height: 160px;"
-              src="https://e7.pngegg.com/pngimages/1000/203/png-clipart-fingerprint-blue-fingerprint-fingerprint-payment-thumbnail.png"/>
+              src="{% static 'fingerprint.png' %}"/>
           </div>
         <div class="mb-4" style="display: none;">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.username.id_for_label }}">
