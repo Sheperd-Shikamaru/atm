@@ -60,31 +60,28 @@
 {% endblock %}
 
 {% block footer_extra %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" integrity="sha384-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.tailwind.min.css" />
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.tailwind.min.js"></script>
 
-    <script type="text/javascript">
-            $(document).ready(function () {
-                $('#costumerdata').DataTable({
-                    preDrawCallback: function () {
-                        let el = $('div.dataTables_filter label');
-                        if (!el.parent('form').length) {
-                            el.wrapAll('<form action="javascript:void(0);"></form>').parent()
-                                .attr('autocomplete', false)
-                                .attr('autofill', false);
-                        }
-                    }
-                });
-        
-            });
-        
-            $(document).ready(function () {
-            $('#costumerdata').DataTable();
-        
-            });
-        </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#costumerdata').DataTable({
+            preDrawCallback: function () {
+                let el = $('div.dataTables_filter label');
+                if (!el.parent('form').length) {
+                    el.wrapAll('<form action="javascript:void(0);"></form>').parent()
+                        .attr('autocomplete', false)
+                        .attr('autofill', false);
+                }
+            }
+        });
+
+        // You don't need this duplicate document.ready block
+    });
+</script>
 
 {% endblock %}
