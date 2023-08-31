@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     
     path(
-        "view_all_users,", views.view_all_users,
+        "view_all_users/", views.view_all_users,
         name="view_all_users"
     )
 ]
