@@ -56,8 +56,7 @@
             <td class="border px-4 py-2 text-center">{{ customer.account__gender }}</td>
             <td class="border px-4 py-2 text-center">{{ customer.account__birth_date }}</td>
             <td class="border px-4 py-2 text-center">
-                <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-8 rounded focus:outline-none focus:shadow-outline"
-                 type="button" href="#">View Fingerprint</a>
+                <a type="button" href="#"><i class="bi bi-fingerprint"></i></a>
             </td>
 
         </tr>
@@ -67,31 +66,28 @@
 {% endblock %}
 
 {% block footer_extra %}
-    <script type="text/javascript">
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
+    <script type="text/javascript">
             $(document).ready(function () {
                 $('#costumerdata').DataTable({
                     preDrawCallback: function () {
-        
                         let el = $('div.dataTables_filter label');
-        
                         if (!el.parent('form').length) {
-        
                             el.wrapAll('<form action="javascript:void(0);"></form>').parent()
-        
                                 .attr('autocomplete', false)
-        
                                 .attr('autofill', false);
-        
                         }
-        
                     }
                 });
         
             });
         
             $(document).ready(function () {
-        
             $('#costumerdata').DataTable();
         
             });
