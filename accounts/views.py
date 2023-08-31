@@ -84,7 +84,6 @@ def get_fingerprint(finger,token):
 def custom_login(request):
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
-        print(f'form = {form}')
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
         
@@ -150,8 +149,7 @@ class LogoutView(RedirectView):
 
 
 def view_all_users(request):
-    all_users = User.objects.values('first_name', 'last_name', 'email', 'date_joined', 'account__account_no', 'account__balance', 'account__account_type', 'account__gender', 'account__birth_date')
-    print(all_users)
+    all_users = User.objects.exclude(is_superuser=True).values('first_name', 'last_name', 'email', 'date_joined', 'account__account_no', 'account__balance', 'account__account_type', 'account__gender', 'account__birth_date')
 
     context = {
         'all_users':all_users
