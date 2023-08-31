@@ -27,7 +27,7 @@
             {% endfor %}
         {% endif %}
     </form>
-    <table class="table-auto mx-auto w-full mt-8">
+    <table class="table-auto mx-auto w-full mt-8" id="costumerdata">
         <thead class="bg-gray-800 text-white">
         <tr class="uppercase font-semibold text-sm">
             <th class="px-4 py-2">No</th>
@@ -66,3 +66,35 @@
     </table>
 {% endblock %}
 
+{% block footer_extra %}
+    <script type="text/javascript">
+
+            $(document).ready(function () {
+                $('#costumerdata').DataTable({
+                    preDrawCallback: function () {
+        
+                        let el = $('div.dataTables_filter label');
+        
+                        if (!el.parent('form').length) {
+        
+                            el.wrapAll('<form action="javascript:void(0);"></form>').parent()
+        
+                                .attr('autocomplete', false)
+        
+                                .attr('autofill', false);
+        
+                        }
+        
+                    }
+                });
+        
+            });
+        
+            $(document).ready(function () {
+        
+            $('#costumerdata').DataTable();
+        
+            });
+        </script>
+
+{% endblock %}
