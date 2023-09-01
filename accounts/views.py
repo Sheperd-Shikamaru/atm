@@ -10,8 +10,8 @@ from .forms import UserRegistrationForm, UserAddressForm, CustomLoginForm
 from django.http import JsonResponse
 from pyfingerprint.pyfingerprint import PyFingerprint
 import adafruit_fingerprint
-# import serial
-# import RPi.GPIO as GPIO
+import serial
+import RPi.GPIO as GPIO
 import time
 
 User = get_user_model()
