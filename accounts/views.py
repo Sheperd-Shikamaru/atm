@@ -86,7 +86,8 @@ def custom_login(request):
         form = CustomLoginForm(request, data=request.POST)
         uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1)
         finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
-        
+        print('request.POST = ',request.POST)
+        print(f"form = {form.is_valid()}")
         password = form.cleaned_data['password']
         token = form.cleaned_data['username']
         
